@@ -1,9 +1,26 @@
 const sql = require('mssql');
-const sqlConfig = require('../sqlConfig')['development'];
+const { v4: uuid } = require("uuid");
 
-const { v4: uuid } = require('uuid');
+const dotenv = require("dotenv");
+dotenv.config();
+
+//const sqlConfig = require('../sqlConfig')['development'];
+var sqlConfig;
+
+console.log("process.env.NODE_ENV: " + process.env.NODE_ENV);
+
+if (process.env.NODE_ENV === "development") {
+  sqlConfig = require("../sqlConfig")["development"];
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+}
+
+if (process.env.NODE_ENV === "production") {
+  sqlConfig = require("../sqlConfig")["production"];
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "1";
+}
 
 console.log("sqlConfig: ", sqlConfig);
+
 
 async function getOnlineAgentByAgentCode(agentcode) {
 
